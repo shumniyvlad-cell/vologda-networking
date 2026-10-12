@@ -1,0 +1,17 @@
+[Unit]
+Description=Vologda networking: leads intake and admin
+After=network-online.target
+
+[Service]
+DynamicUser=yes
+StateDirectory=vologda-leads
+EnvironmentFile=/etc/vologda-leads/env
+ExecStart=/usr/bin/node /opt/vologda-leads/server.mjs
+Restart=on-failure
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

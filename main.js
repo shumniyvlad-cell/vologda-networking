@@ -1,7 +1,7 @@
-// Куда уходит анкета. Пока formEndpoint пустой, кнопка открывает Telegram с готовым текстом.
-// Когда появится реле (POST JSON), вписать сюда его адрес. Токены ботов в этот файл не класть.
+// Анкета уходит POST-запросом на formEndpoint (сервис в server/), потом открывается канал встречи.
+// Токены и пароли в этот файл не класть: он публичный.
 const CONFIG = {
-  formEndpoint: "",
+  formEndpoint: "https://vologda.45-12-63-159.sslip.io/api/lead",
   telegram: "marchvlv",
   // канал встречи: ссылка показывается после анкеты
   channel: "https://t.me/+Fs6dIuJeFpo2OWMy",
@@ -134,33 +134,14 @@ function anketaText(d) {
   return lines.join("\n");
 }
 
-/* отправка */
+/* отправка: анкета уходит на сервер, человека сразу ведём в канал встречи */
 const submitBtn = $("#submit");
 const anketa = $("#anketa");
 const done = $("#done");
-const viaTelegram = !CONFIG.formEndpoint;
-if (viaTelegram) submitBtn.textContent = "Отправить в Telegram";
+const endpoint = location.hostname === "localhost" ? "http://localhost:8798/api/lead" : CONFIG.formEndpoint;
 
-function showDone(viaTg, tgUrl, plain) {
-  $("#done-title").textContent = viaTg ? "Осталось два шага" : "Ты в списке";
-  $("#done-text").hidden = viaTg;
-  $("#step-send").hidden = !viaTg;
-  $("#step-channel").hidden = !CONFIG.channel;
-  $("#done-steps").classList.toggle("is-single", !viaTg || !CONFIG.channel);
-  $("#done-channel").href = CONFIG.channel || "#";
-  if (viaTg) {
-    $("#done-tg").href = tgUrl;
-    const copy = $("#done-copy");
-    copy.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(plain);
-        copy.textContent = "Анкета скопирована";
-      } catch (e) {
-        copy.textContent = "Не скопировалось, открой анкету ссылкой";
-      }
-    };
-  }
-  $(".badge-stamp").textContent = viaTg ? "почти" : "в списке";
+function showDone() {
+  $("#done-channel").href = CONFIG.channel;
   form.classList.add("is-done");
   anketa.classList.add("is-done");
   badge.classList.add("is-stamped");
@@ -169,9 +150,20 @@ function showDone(viaTg, tgUrl, plain) {
   anketa.scrollIntoView({ block: "start" });
 }
 
+function showSendError(d) {
+  const box = $('[data-err="form"]');
+  box.replaceChildren(document.createTextNode("Анкета не ушла. Проверь интернет и нажми ещё раз. Если не помогает, "));
+  const a = document.createElement("a");
+  a.href = "https://t.me/" + CONFIG.telegram + "?text=" + encodeURIComponent(anketaText(d));
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.textContent = "отправь её мне в Telegram";
+  box.append(a, document.createTextNode("."));
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (form.company.value) return;
+  if (submitBtn.disabled) return;
 
   const d = readForm();
   const errors = validate(d);
@@ -185,28 +177,21 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  const text = anketaText(d);
-  const tgUrl = "https://t.me/" + CONFIG.telegram + "?text=" + encodeURIComponent(text);
-
-  if (viaTelegram) {
-    window.open(tgUrl, "_blank", "noopener");
-    showDone(true, tgUrl, text);
-    return;
-  }
-
   submitBtn.disabled = true;
   submitBtn.textContent = "Отправляю анкету";
+  setError("form", "");
   try {
-    const res = await fetch(CONFIG.formEndpoint, {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...d, source: "vologda-networking", sentAt: new Date().toISOString() }),
+      body: JSON.stringify({ ...d, company: form.company.value }),
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
-    showDone(false);
+    showDone();
+    setTimeout(() => { window.location.href = CONFIG.channel; }, 1200);
   } catch (err) {
     submitBtn.disabled = false;
     submitBtn.textContent = "Записаться на встречу";
-    setError("form", "Анкета не ушла. Проверь интернет и нажми ещё раз.");
+    showSendError(d);
   }
 });

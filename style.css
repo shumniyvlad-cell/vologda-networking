@@ -267,6 +267,7 @@ fieldset { border: 0; min-width: 0; }
 .submit { display: grid; gap: 16px; justify-items: start; }
 .consent { font-size: 14px; color: var(--muted); max-width: 34em; }
 .err-form { font-size: 16px; }
+.err-form a { color: inherit; }
 
 .done { display: grid; gap: 18px; justify-items: start; max-width: 36em; padding: 8px 0; }
 .done:focus { outline: none; }
@@ -275,11 +276,6 @@ fieldset { border: 0; min-width: 0; }
   letter-spacing: var(--track); text-transform: uppercase; color: var(--lime);
 }
 .done p { font-size: 19px; }
-.steps { list-style: none; display: grid; gap: 30px; counter-reset: step; }
-.steps li { position: relative; display: grid; gap: 12px; justify-items: start; counter-increment: step; padding-left: 52px; }
-.steps li::before { content: counter(step); position: absolute; left: 0; top: -6px; font: 900 calc(54px * var(--ds))/1 var(--display); color: var(--lime); }
-.steps.is-single li { padding-left: 0; }
-.steps.is-single li::before { content: none; }
 .done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 6px; }
 
 @media (min-width: 900px) {

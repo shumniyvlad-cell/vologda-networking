@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Анкеты: встреча в Вологде</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sofia+Sans+Extra+Condensed:wght@900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f3ef; --card: #ffffff; --ink: #0b0b0c; --muted: #6d6c67; --line: #e2e0d9;
+  --lime: #c8ff2e; --bar: #0b0b0c; --warn: #c2410c;
+  --display: "Sofia Sans Extra Condensed", "Arial Narrow", sans-serif;
+  --body: "Manrope", system-ui, -apple-system, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font: 400 15px/1.45 var(--body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 24px clamp(14px, 3vw, 40px) 64px; }
+
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; margin-bottom: 24px; }
+.head h1 { font: 900 clamp(40px, 6vw, 68px)/.9 var(--display); text-transform: uppercase; }
+.head p { color: var(--muted); margin-top: 6px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; font-weight: 700; padding: 11px 16px; border-radius: 10px; border: 1px solid var(--ink); background: var(--card); text-decoration: none; color: var(--ink); }
+.btn-main { background: var(--lime); }
+.btn:hover { background: var(--ink); color: #fff; }
+
+.stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 14px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px 20px; }
+.card h2 { font: 700 14px/1.2 var(--body); color: var(--muted); margin-bottom: 14px; }
+.total { display: flex; flex-direction: column; justify-content: space-between; background: var(--ink); color: #fff; border-color: var(--ink); }
+.total h2 { color: #b9b8b2; }
+.total-num { font: 900 clamp(84px, 9vw, 128px)/.8 var(--display); color: var(--lime); }
+.total-sub { color: #b9b8b2; margin-top: 12px; }
+
+.bars { display: grid; gap: 12px; }
+.bar-row { display: grid; gap: 5px; }
+.bar-top { display: flex; justify-content: space-between; gap: 12px; font-weight: 600; }
+.bar-top b { font-weight: 800; font-variant-numeric: tabular-nums; }
+.bar-track { height: 10px; border-radius: 99px; background: #ecebe5; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 99px; background: var(--bar); min-width: 0; transition: width .4s; }
+.bar-row.is-lead .bar-fill { background: #86c400; }
+.verdict { margin-top: 14px; font-weight: 700; }
+
+.roles { display: flex; flex-wrap: wrap; gap: 8px; }
+.role { display: inline-flex; gap: 8px; align-items: baseline; padding: 7px 12px; border: 1px solid var(--line); border-radius: 99px; font-weight: 600; }
+.role b { font-weight: 800; font-variant-numeric: tabular-nums; }
+.role.is-zero { color: #a5a49e; }
+
+.tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 26px 0 12px; }
+.tools h2 { font: 800 20px/1.2 var(--body); }
+.search { width: min(340px, 100%); font: 500 15px/1.2 var(--body); padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+
+.table-wrap { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 1120px; }
+th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+th { font: 700 13px/1.2 var(--body); color: var(--muted); white-space: nowrap; background: #faf9f6; position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.name { font-weight: 700; min-width: 150px; }
+td.when { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.seek { color: #3d3c39; max-width: 260px; }
+td.phone { white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.tg a { font-weight: 700; text-underline-offset: 3px; }
+.pill { display: inline-block; padding: 3px 9px; border-radius: 99px; background: #ecebe5; font-weight: 600; white-space: nowrap; }
+.pill.is-pick { background: var(--lime); }
+.del { border: 0; background: none; color: var(--muted); padding: 4px 6px; border-radius: 6px; }
+.del:hover { color: var(--warn); background: #fdeee6; }
+.empty { padding: 44px 20px; text-align: center; color: var(--muted); }
+.empty b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 6px; }
+.note { color: var(--muted); font-size: 13px; margin-top: 12px; }
+.error { background: #fdeee6; color: var(--warn); border-radius: 10px; padding: 12px 14px; font-weight: 600; margin-bottom: 14px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div>
+      <h1>Анкеты</h1>
+      <p>Встреча в Вологде, 28 или 29 октября. <span id="updated"></span></p>
+    </div>
+    <div class="actions">
+      <button class="btn" id="refresh" type="button">Обновить</button>
+      <a class="btn btn-main" href="/admin/leads.csv">Скачать таблицу</a>
+    </div>
+  </header>
+
+  <p class="error" id="error" hidden></p>
+
+  <section class="stats">
+    <div class="card total">
+      <h2>Всего анкет</h2>
+      <div>
+        <div class="total-num" id="total">0</div>
+        <p class="total-sub" id="total-sub"></p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Какой день выбирают</h2>
+      <div class="bars" id="dates"></div>
+      <p class="verdict" id="dates-verdict"></p>
+    </div>
+    <div class="card">
+      <h2>Где хотят собраться</h2>
+      <div class="bars" id="places"></div>
+      <p class="verdict" id="places-verdict"></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Кто записался</h2>
+    <div class="roles" id="roles"></div>
+  </section>
+
+  <div class="tools">
+    <h2>Список</h2>
+    <input class="search" id="search" type="search" placeholder="Найти по имени, нише или нику" aria-label="Поиск по анкетам">
+  </div>
+
+  <div class="table-wrap">
+    <table id="table">
+      <thead>
+        <tr><th>Подана</th><th>Имя</th><th>Кто</th><th>Чем занимается</th><th>Telegram</th><th>Телефон</th><th>День</th><th>Место</th><th>Кого хочет встретить</th><th></th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="empty" id="empty" hidden><b>Анкет пока нет</b>Как только кто-то заполнит анкету на сайте, она появится здесь.</div>
+  </div>
+  <p class="note">Страница сама обновляется раз в 30 секунд. Если человек заполнил анкету дважды с одним ником, остаётся последняя версия.</p>
+</div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+let data = { leads: [], total: 0, dates: [], places: [], roles: [] };
+
+const fmt = new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+const plural = (n, a, b, c) => { const m = n % 100, k = n % 10; return m > 10 && m < 20 ? c : k === 1 ? a : k >= 2 && k <= 4 ? b : c; };
+
+function bars(target, items, verdictEl, anyLabel) {
+  target.replaceChildren();
+  const max = Math.max(1, ...items.map((i) => i.count));
+  const real = items.filter((i) => i.label !== anyLabel);
+  const top = Math.max(...real.map((i) => i.count));
+  const leaders = real.filter((i) => i.count === top && top > 0);
+  items.forEach((i) => {
+    const row = el("div", "bar-row" + (leaders.length === 1 && leaders[0] === i ? " is-lead" : ""));
+    const head = el("div", "bar-top");
+    head.append(el("span", "", i.label), el("b", "", String(i.count)));
+    const track = el("div", "bar-track");
+    const fill = el("div", "bar-fill");
+    fill.style.width = (i.count / max) * 100 + "%";
+    track.append(fill);
+    row.append(head, track);
+    target.append(row);
+  });
+  verdictEl.textContent = top === 0 ? "Голосов пока нет"
+    : leaders.length === 1 ? "Впереди: " + leaders[0].label.toLowerCase()
+    : "Пока поровну";
+}
+
+function render() {
+  $("#total").textContent = data.total;
+  $("#total-sub").textContent = data.total ? plural(data.total, "человек хочет", "человека хотят", "человек хотят") + " прийти" : "Ждём первых";
+  bars($("#dates"), data.dates, $("#dates-verdict"), "Любой из двух дней");
+  bars($("#places"), data.places, $("#places-verdict"), "Без разницы");
+
+  const roles = $("#roles");
+  roles.replaceChildren();
+  data.roles.forEach((r) => {
+    const chip = el("span", "role" + (r.count ? "" : " is-zero"));
+    chip.append(el("span", "", r.label), el("b", "", String(r.count)));
+    roles.append(chip);
+  });
+
+  const q = $("#search").value.trim().toLowerCase();
+  const list = data.leads.filter((l) => !q || [l.name, l.roles, l.what, l.telegram, l.phone, l.seek].join(" ").toLowerCase().includes(q));
+  const rows = $("#rows");
+  rows.replaceChildren();
+  list.forEach((l) => {
+    const tr = el("tr");
+    tr.append(el("td", "when", fmt.format(new Date(l.created_at))), el("td", "name", l.name), el("td", "", l.roles), el("td", "", l.what));
+    const tg = el("td", "tg");
+    const a = el("a", "", l.telegram);
+    a.href = "https://t.me/" + l.telegram.replace(/^@/, "");
+    a.target = "_blank"; a.rel = "noopener";
+    tg.append(a);
+    const date = el("td"); date.append(el("span", "pill", l.date));
+    const place = el("td"); place.append(el("span", "pill", l.place));
+    const del = el("td");
+    const btn = el("button", "del", "Убрать");
+    btn.type = "button";
+    btn.addEventListener("click", () => remove(l));
+    del.append(btn);
+    tr.append(tg, el("td", "phone", l.phone), date, place, el("td", "seek", l.seek), del);
+    rows.append(tr);
+  });
+  $("#table").hidden = !list.length;
+  const empty = $("#empty");
+  empty.hidden = Boolean(list.length);
+  if (!list.length && data.total) empty.replaceChildren(el("b", "", "Ничего не нашлось"), document.createTextNode("Попробуй другое слово."));
+}
+
+async function load() {
+  try {
+    const res = await fetch(location.origin + "/admin/leads.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+    $("#error").hidden = true;
+    $("#updated").textContent = "Обновлено в " + new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date()) + ".";
+    render();
+  } catch (e) {
+    $("#error").textContent = "Не получилось загрузить анкеты. Проверь интернет и нажми «Обновить».";
+    $("#error").hidden = false;
+  }
+}
+
+async function remove(lead) {
+  if (!confirm("Убрать анкету «" + lead.name + "» из списка?")) return;
+  const res = await fetch(location.origin + "/admin/delete", { method: "POST", headers: { "Content-Type": "application/json", "X-Admin": "1" }, body: JSON.stringify({ id: lead.id }) });
+  if (!res.ok) { $("#error").textContent = "Анкета не убралась, попробуй ещё раз."; $("#error").hidden = false; return; }
+  load();
+}
+
+$("#search").addEventListener("input", render);
+$("#refresh").addEventListener("click", load);
+load();
+setInterval(() => { if (!document.hidden) load(); }, 30000);
+</script>
+</body>
+</html>
