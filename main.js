@@ -8,18 +8,30 @@ const CONFIG = {
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
-/* плакат: каждая строка растянута на ширину колонки */
+/* плакат: длинная строка растянута на всю ширину, фото встаёт в просвет справа от двух коротких */
+const poster = $(".poster");
+const posterWrap = $(".poster-wrap");
 function fitPoster() {
-  $$(".fit").forEach((line) => {
-    const inner = line.firstElementChild;
-    line.style.fontSize = "100px";
-    const w = inner.getBoundingClientRect().width;
-    if (w) line.style.fontSize = (100 * line.clientWidth / w) * 0.995 + "px";
-  });
+  const lines = $$(":scope > span", poster);
+  const inner = lines.map((l) => l.firstElementChild);
+  poster.style.fontSize = "100px";
+  const longest = inner[2].getBoundingClientRect().width;
+  if (!longest) return;
+  let fs = (100 * poster.clientWidth / longest) * 0.995;
+  // на низких широких экранах три строки не должны уезжать за первый экран
+  if (window.innerWidth >= 900) fs = Math.min(fs, (window.innerHeight - 84) / 2.72);
+  poster.style.fontSize = fs + "px";
+  const shortW = Math.max(inner[0].getBoundingClientRect().width, inner[1].getBoundingClientRect().width);
+  const top = poster.getBoundingClientRect().top;
+  const twoLines = lines[1].getBoundingClientRect().bottom - top;
+  posterWrap.style.setProperty("--pl", shortW + fs * 0.16 + "px");
+  posterWrap.style.setProperty("--pt", fs * 0.05 + "px");
+  posterWrap.style.setProperty("--ph", twoLines - fs * 0.13 + "px");
 }
 fitPoster();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPoster);
-new ResizeObserver(fitPoster).observe($(".poster"));
+if (document.fonts) document.fonts.addEventListener("loadingdone", fitPoster);
+new ResizeObserver(fitPoster).observe(posterWrap);
 
 /* бейдж */
 const form = $("#form");

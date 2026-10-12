@@ -15,16 +15,24 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Manrope:wght@400;500;600;700;800&family=Sofia+Sans+Extra+Condensed:wght@800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script>
 (function () {
-  var d = document.documentElement, f = null;
+  var d = document.documentElement, f = null, q = new URLSearchParams(location.search);
   try {
-    var q = new URLSearchParams(location.search);
     if (q.has("motion")) localStorage.setItem("motion", q.get("motion"));
     f = localStorage.getItem("motion");
   } catch (e) {}
+  // временно, пока Влад выбирает шрифт: ?font=2 и ?font=3
+  var alt = { "2": "Montserrat:wght@900", "3": "Geologica:wght@900" }[q.get("font")];
+  if (alt) {
+    d.dataset.font = q.get("font");
+    var l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = "https://fonts.googleapis.com/css2?family=" + alt + "&display=swap";
+    document.head.appendChild(l);
+  }
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (f === "1" || (!reduce && f !== "0")) d.classList.add("motion");
 })();
@@ -40,16 +48,17 @@
 
 <main>
   <section class="hero">
-    <h1 class="poster" aria-label="Вологда, давай знакомиться">
-      <span class="fit" aria-hidden="true"><span>Вологда</span></span>
-      <span class="fit" aria-hidden="true"><span>давай</span></span>
-      <span class="fit" aria-hidden="true"><span>знакомиться</span></span>
-    </h1>
-
-    <figure class="hero-photo">
-      <img src="img/vlad.jpg" alt="Влад Марч в голубом худи с надписью lonely стоит среди размытых прохожих" width="1122" height="1402">
-      <figcaption class="sticker">это ненадолго</figcaption>
-    </figure>
+    <div class="poster-wrap">
+      <h1 class="poster" aria-label="Вологда, давай знакомиться">
+        <span aria-hidden="true"><span>Вологда</span></span>
+        <span aria-hidden="true"><span>давай</span></span>
+        <span aria-hidden="true"><span>знакомиться</span></span>
+      </h1>
+      <figure class="hero-photo">
+        <img src="img/vlad.jpg" alt="Влад Марч в голубом худи с надписью lonely стоит среди размытых прохожих" width="1122" height="1402">
+        <figcaption class="sticker">это ненадолго</figcaption>
+      </figure>
+    </div>
 
     <div class="hero-foot">
       <p class="lede">Я Влад Марч, медиа-продюсер. В конце октября переезжаю в Вологду и пока никого здесь не знаю. Собираю встречу для тех, кто делает в городе своё дело. Без сцены и продаж, просто познакомиться.</p>
