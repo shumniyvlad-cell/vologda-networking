@@ -3,6 +3,8 @@
 const CONFIG = {
   formEndpoint: "",
   telegram: "marchvlv",
+  // канал встречи: ссылка показывается после анкеты
+  channel: "https://t.me/+Fs6dIuJeFpo2OWMy",
 };
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -112,7 +114,7 @@ function validate(d) {
   const errors = {};
   if (d.name.length < 2) errors.name = "Напиши, как к тебе обращаться.";
   if (!d.roles.length) errors.role = "Отметь хотя бы один вариант.";
-  if (!/^@[A-Za-z0-9_]{4,32}$/.test(d.telegram)) errors.telegram = "Нужен ник в Telegram, например @ivanov. По нему я пришлю день и адрес.";
+  if (!/^@[A-Za-z0-9_]{4,32}$/.test(d.telegram)) errors.telegram = "Нужен ник в Telegram, например @ivanov. По нему я найду тебя, если что-то поменяется.";
   if (!d.date) errors.date = "Выбери день, это твой голос.";
   if (!d.place) errors.place = "Выбери место, это твой голос.";
   return errors;
@@ -139,27 +141,28 @@ const done = $("#done");
 const viaTelegram = !CONFIG.formEndpoint;
 if (viaTelegram) submitBtn.textContent = "Отправить в Telegram";
 
-function showDone(title, text, tgUrl, plain) {
-  $("#done-title").textContent = title;
-  $("#done-text").textContent = text;
-  const tg = $("#done-tg");
-  const copy = $("#done-copy");
-  tg.hidden = !tgUrl;
-  copy.hidden = !plain;
-  if (tgUrl) tg.href = tgUrl;
-  if (plain) {
+function showDone(viaTg, tgUrl, plain) {
+  $("#done-title").textContent = viaTg ? "Осталось два шага" : "Ты в списке";
+  $("#done-text").hidden = viaTg;
+  $("#step-send").hidden = !viaTg;
+  $("#step-channel").hidden = !CONFIG.channel;
+  $("#done-steps").classList.toggle("is-single", !viaTg || !CONFIG.channel);
+  $("#done-channel").href = CONFIG.channel || "#";
+  if (viaTg) {
+    $("#done-tg").href = tgUrl;
+    const copy = $("#done-copy");
     copy.onclick = async () => {
       try {
         await navigator.clipboard.writeText(plain);
         copy.textContent = "Анкета скопирована";
       } catch (e) {
-        copy.textContent = "Не скопировалось, открой Telegram кнопкой";
+        copy.textContent = "Не скопировалось, открой анкету ссылкой";
       }
     };
   }
+  $(".badge-stamp").textContent = viaTg ? "почти" : "в списке";
   form.classList.add("is-done");
   anketa.classList.add("is-done");
-  $(".badge-stamp").textContent = tgUrl ? "почти" : "в списке";
   badge.classList.add("is-stamped");
   done.hidden = false;
   done.focus({ preventScroll: true });
@@ -187,12 +190,7 @@ form.addEventListener("submit", async (e) => {
 
   if (viaTelegram) {
     window.open(tgUrl, "_blank", "noopener");
-    showDone(
-      "Остался один шаг",
-      "Открылся Telegram с готовой анкетой. Нажми «Отправить», и ты в списке. День и адрес пришлю туда же.",
-      tgUrl,
-      text
-    );
+    showDone(true, tgUrl, text);
     return;
   }
 
@@ -205,7 +203,7 @@ form.addEventListener("submit", async (e) => {
       body: JSON.stringify({ ...d, source: "vologda-networking", sentAt: new Date().toISOString() }),
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
-    showDone("Ты в списке", "Анкета у меня. День, время и адрес пришлю в Telegram на " + d.telegram + ".", "", "");
+    showDone(false);
   } catch (err) {
     submitBtn.disabled = false;
     submitBtn.textContent = "Записаться на встречу";

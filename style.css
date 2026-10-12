@@ -275,6 +275,11 @@ fieldset { border: 0; min-width: 0; }
   letter-spacing: var(--track); text-transform: uppercase; color: var(--lime);
 }
 .done p { font-size: 19px; }
+.steps { list-style: none; display: grid; gap: 30px; counter-reset: step; }
+.steps li { position: relative; display: grid; gap: 12px; justify-items: start; counter-increment: step; padding-left: 52px; }
+.steps li::before { content: counter(step); position: absolute; left: 0; top: -6px; font: 900 calc(54px * var(--ds))/1 var(--display); color: var(--lime); }
+.steps.is-single li { padding-left: 0; }
+.steps.is-single li::before { content: none; }
 .done-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 6px; }
 
 @media (min-width: 900px) {
@@ -286,10 +291,13 @@ fieldset { border: 0; min-width: 0; }
 }
 .form.is-done .fields, .form.is-done .submit { display: none; }
 .anketa.is-done { display: grid; }
+/* после отправки шаги идут раньше бейджа, чтобы кнопка канала была на виду */
+.anketa.is-done .done { order: 1; }
+.anketa.is-done .form { order: 2; margin-top: 32px; }
 @media (min-width: 900px) {
   .anketa.is-done { grid-template-columns: minmax(0, 1fr) 360px; column-gap: clamp(40px, 7vw, 110px); align-items: start; }
   .anketa.is-done .anketa-head { grid-column: 1 / -1; }
-  .anketa.is-done .form { display: block; grid-column: 2; grid-row: 2; }
+  .anketa.is-done .form { display: block; grid-column: 2; grid-row: 2; margin-top: 0; }
   .anketa.is-done .done { grid-column: 1; grid-row: 2; }
   .anketa.is-done .badge-wrap { position: static; }
 }

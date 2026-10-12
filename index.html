@@ -81,11 +81,11 @@
     <dl class="rows">
       <div class="row">
         <dt>Когда</dt>
-        <dd><strong>28 или 29 октября</strong><span>День выбираем голосованием в анкете. Время напишу каждому в Telegram.</span></dd>
+        <dd><strong>28 или 29 октября</strong><span>День выбираем голосованием в анкете. Время объявлю в канале встречи.</span></dd>
       </div>
       <div class="row">
         <dt>Где</dt>
-        <dd><strong>Коворкинг или ресторан</strong><span>Тоже решаете вы. Адрес пришлю, когда соберу голоса.</span></dd>
+        <dd><strong>Коворкинг или ресторан</strong><span>Тоже решаете вы. Адрес будет в канале, когда соберу голоса.</span></dd>
       </div>
       <div class="row">
         <dt>Вход</dt>
@@ -123,7 +123,7 @@
   <section class="anketa" id="anketa">
     <div class="anketa-head">
       <h2 class="h2">Анкета</h2>
-      <p>По ней я пойму, кто придёт, и выберу день и место. Пока заполняешь, собирается твой бейдж.</p>
+      <p>По ней я пойму, кто придёт, и выберу день и место. После анкеты дам ссылку на канал встречи.</p>
     </div>
 
     <form class="form" id="form" novalidate>
@@ -218,11 +218,20 @@
 
     <div class="done" id="done" hidden tabindex="-1">
       <h3 class="done-title" id="done-title"></h3>
-      <p id="done-text"></p>
-      <div class="done-actions">
-        <a class="btn" id="done-tg" href="#" target="_blank" rel="noopener" hidden>Открыть Telegram с анкетой</a>
-        <button class="link-btn" type="button" id="done-copy" hidden>Скопировать анкету</button>
-      </div>
+      <p id="done-text" hidden>Анкета у меня.</p>
+      <ol class="steps" id="done-steps">
+        <li id="step-send">
+          <p><b>Отправь анкету.</b> Telegram открылся с готовым текстом, нажми «Отправить».</p>
+          <div class="done-actions">
+            <a class="link-btn" id="done-tg" href="#" target="_blank" rel="noopener">Открыть анкету ещё раз</a>
+            <button class="link-btn" type="button" id="done-copy">Скопировать анкету</button>
+          </div>
+        </li>
+        <li id="step-channel">
+          <p><b>Зайди в канал встречи.</b> Там объявлю день, время и адрес.</p>
+          <a class="btn" id="done-channel" href="#" target="_blank" rel="noopener">Перейти в канал</a>
+        </li>
+      </ol>
     </div>
   </section>
 </main>
