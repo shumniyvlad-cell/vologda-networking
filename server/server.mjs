@@ -42,12 +42,17 @@ db.exec(`
   );
 `);
 
+// согласие на показ в каталоге появилось позже первой версии базы
+if (!db.prepare("PRAGMA table_info(leads)").all().some((c) => c.name === "catalog")) {
+  db.exec("ALTER TABLE leads ADD COLUMN catalog INTEGER NOT NULL DEFAULT 0");
+}
+
 const upsert = db.prepare(`
-  INSERT INTO leads (created_at, updated_at, name, roles, what, telegram, tg_key, phone, date, place, seek, deleted)
-  VALUES (@now, @now, @name, @roles, @what, @telegram, @tg_key, @phone, @date, @place, @seek, 0)
+  INSERT INTO leads (created_at, updated_at, name, roles, what, telegram, tg_key, phone, date, place, seek, catalog, deleted)
+  VALUES (@now, @now, @name, @roles, @what, @telegram, @tg_key, @phone, @date, @place, @seek, @catalog, 0)
   ON CONFLICT(tg_key) DO UPDATE SET
     updated_at = @now, name = @name, roles = @roles, what = @what, telegram = @telegram,
-    phone = @phone, date = @date, place = @place, seek = @seek, deleted = 0
+    phone = @phone, date = @date, place = @place, seek = @seek, catalog = @catalog, deleted = 0
 `);
 const listLeads = db.prepare("SELECT * FROM leads WHERE deleted = 0 ORDER BY created_at DESC");
 const countLeads = db.prepare("SELECT COUNT(*) AS n FROM leads");
@@ -115,7 +120,7 @@ function parseLead(body) {
   return {
     lead: {
       name, roles: roles.join(", "), telegram, tg_key: telegram.toLowerCase(), date, place,
-      what: clean(body.what, 120), seek: clean(body.seek, 400),
+      what: clean(body.what, 120), seek: clean(body.seek, 400), catalog: body.catalog === true ? 1 : 0,
       phone: clean(body.phone, 40).replace(/[^0-9+() -]/g, "").slice(0, 30),
     },
   };
@@ -153,7 +158,7 @@ function tally(leads, field, options) {
 function adminData() {
   const leads = listLeads.all();
   const roles = ROLES.map((r) => ({ label: r, count: leads.filter((l) => l.roles.split(", ").includes(r)).length }));
-  return { leads, total: leads.length, dates: tally(leads, "date", DATES), places: tally(leads, "place", PLACES), roles };
+  return { leads, total: leads.length, catalog: leads.filter((l) => l.catalog).length, dates: tally(leads, "date", DATES), places: tally(leads, "place", PLACES), roles };
 }
 
 function csv(leads) {
@@ -161,8 +166,8 @@ function csv(leads) {
   // свободный текст анкеты Excel может принять за формулу, ник и телефон уже проверены на входе
   const text = (v) => (/^[=+\-@\t]/.test(String(v ?? "")) ? "'" + v : v);
   const when = new Intl.DateTimeFormat("ru-RU", { timeZone: "Europe/Moscow", dateStyle: "short", timeStyle: "short" });
-  const head = ["Подана (МСК)", "Имя", "Кто", "Чем занимается", "Telegram", "Телефон", "День", "Место", "Кого хочет встретить"];
-  const rows = leads.map((l) => [when.format(new Date(l.created_at)), text(l.name), l.roles, text(l.what), l.telegram, l.phone, l.date, l.place, text(l.seek)]);
+  const head = ["Подана (МСК)", "Имя", "Кто", "Чем занимается", "Telegram", "Телефон", "День", "Место", "Кого хочет встретить", "В каталог"];
+  const rows = leads.map((l) => [when.format(new Date(l.created_at)), text(l.name), l.roles, text(l.what), l.telegram, l.phone, l.date, l.place, text(l.seek), l.catalog ? "да" : "нет"]);
   return "﻿" + [head, ...rows].map((r) => r.map(cell).join(";")).join("\r\n") + "\r\n";
 }
 

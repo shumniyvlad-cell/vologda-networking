@@ -66,6 +66,7 @@ function readForm() {
     date: fd.get("date") || "",
     place: fd.get("place") || "",
     seek: (fd.get("seek") || "").trim(),
+    catalog: fd.get("catalog") === "on",
   };
 }
 

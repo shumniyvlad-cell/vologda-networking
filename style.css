@@ -228,6 +228,17 @@ fieldset { border: 0; min-width: 0; }
 .vote-any b { font: 600 16px/1.2 var(--body); letter-spacing: 0; text-transform: none; }
 .vote-any input:checked + span { transform: none; }
 
+.check { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 14px; align-items: start; cursor: pointer; }
+.check input { position: absolute; opacity: 0; width: 30px; height: 30px; margin: 0; cursor: pointer; }
+.check-box { width: 30px; height: 30px; border: 1.5px solid var(--line); border-radius: 9px; display: grid; place-items: center; transition: background .18s, border-color .18s; }
+.check-box::after { content: ""; width: 13px; height: 7px; border-left: 3px solid var(--ink); border-bottom: 3px solid var(--ink); transform: translateY(-2px) rotate(-45deg) scale(0); transition: transform .2s var(--ease); }
+.check:hover .check-box { border-color: var(--paper); }
+.check input:checked + .check-box { background: var(--lime); border-color: var(--lime); }
+.check input:checked + .check-box::after { transform: translateY(-2px) rotate(-45deg) scale(1); }
+.check input:focus-visible + .check-box { outline: 3px solid var(--lime); outline-offset: 3px; }
+.check-text { font-size: 14px; line-height: 1.45; color: var(--muted); }
+.check-text b { display: block; font: 800 clamp(17px, 1.4vw, 20px)/1.25 var(--body); letter-spacing: -.015em; color: var(--paper); margin-bottom: 4px; }
+
 /* бейдж */
 .badge-wrap { display: grid; justify-items: center; padding: 8px 0; }
 .badge {

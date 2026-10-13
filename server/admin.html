@@ -57,7 +57,7 @@ button { font: inherit; cursor: pointer; }
 .search { width: min(340px, 100%); font: 500 15px/1.2 var(--body); padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
 
 .table-wrap { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 1120px; }
+table { width: 100%; border-collapse: collapse; min-width: 1220px; }
 th, td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--line); }
 th { font: 700 13px/1.2 var(--body); color: var(--muted); white-space: nowrap; background: #faf9f6; position: sticky; top: 0; }
 tr:last-child td { border-bottom: 0; }
@@ -125,7 +125,7 @@ td.tg a { font-weight: 700; text-underline-offset: 3px; }
   <div class="table-wrap">
     <table id="table">
       <thead>
-        <tr><th>Подана</th><th>Имя</th><th>Кто</th><th>Чем занимается</th><th>Telegram</th><th>Телефон</th><th>День</th><th>Место</th><th>Кого хочет встретить</th><th></th></tr>
+        <tr><th>Подана</th><th>Имя</th><th>Кто</th><th>Чем занимается</th><th>Telegram</th><th>Телефон</th><th>День</th><th>Место</th><th>Кого хочет встретить</th><th>В каталог</th><th></th></tr>
       </thead>
       <tbody id="rows"></tbody>
     </table>
@@ -166,7 +166,9 @@ function bars(target, items, verdictEl, anyLabel) {
 
 function render() {
   $("#total").textContent = data.total;
-  $("#total-sub").textContent = data.total ? plural(data.total, "человек хочет", "человека хотят", "человек хотят") + " прийти" : "Ждём первых";
+  $("#total-sub").textContent = data.total
+    ? plural(data.total, "человек хочет", "человека хотят", "человек хотят") + " прийти, в каталог согласны " + (data.catalog || 0)
+    : "Ждём первых";
   bars($("#dates"), data.dates, $("#dates-verdict"), "Любой из двух дней");
   bars($("#places"), data.places, $("#places-verdict"), "Без разницы");
 
@@ -197,7 +199,8 @@ function render() {
     btn.type = "button";
     btn.addEventListener("click", () => remove(l));
     del.append(btn);
-    tr.append(tg, el("td", "phone", l.phone), date, place, el("td", "seek", l.seek), del);
+    const cat = el("td"); cat.append(el("span", "pill" + (l.catalog ? " is-pick" : ""), l.catalog ? "да" : "нет"));
+    tr.append(tg, el("td", "phone", l.phone), date, place, el("td", "seek", l.seek), cat, del);
     rows.append(tr);
   });
   $("#table").hidden = !list.length;
