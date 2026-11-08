@@ -1,7 +1,7 @@
 // Анкета уходит POST-запросом на formEndpoint (сервис в server/), потом открывается канал встречи.
 // Токены и пароли в этот файл не класть: он публичный.
 const CONFIG = {
-  formEndpoint: "https://vologda.45-12-63-159.sslip.io/api/lead",
+  formEndpoint: "https://vologda.83-141-94-106.sslip.io/api/lead",
   telegram: "marchvlv",
   // канал встречи: ссылка показывается после анкеты
   channel: "https://t.me/+Fs6dIuJeFpo2OWMy",

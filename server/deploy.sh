@@ -1,7 +1,7 @@
 #!/bin/sh
 # Выкладка сервиса анкет на сервер «Час». Пароль админки живёт только в /etc/vologda-leads/env.
 set -eu
-HOST="root@45.12.63.159"
+HOST="root@83.141.94.106"
 KEY="$HOME/.ssh/id_ed25519_chas"
 cd "$(dirname "$0")"
 rsync -az -e "ssh -i $KEY" server.mjs admin.html "$HOST:/opt/vologda-leads/"
