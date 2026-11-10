@@ -2,7 +2,7 @@
 // Токены и пароли в этот файл не класть: он публичный.
 const CONFIG = {
   formEndpoint: "https://vologda.83-141-94-106.sslip.io/api/lead",
-  telegram: "marchvlv",
+  telegram: "marchvlvv",
   // канал встречи: ссылка показывается после анкеты
   channel: "https://t.me/+Fs6dIuJeFpo2OWMy",
 };
